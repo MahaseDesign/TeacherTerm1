@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y9 Python L6 — Complete Programs & Review</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#2d3318;--surface:#3a4220;--surface2:#454e27;--border:#5a6632;
+  --accent:#c8e06e;--accent2:#e8c84e;--text:#f0f2e0;--muted:#9aA878;
+  --success:#6ec87a;--warning:#e8c84e;--danger:#e07060;
+  --mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;}
+.presentation{display:flex;flex-direction:column;height:100vh;}
+.progress-bar{height:4px;background:var(--border);flex-shrink:0;}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.5s ease;}
+.slide-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;}
+.slide{width:100%;max-width:940px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:44px 52px;position:relative;overflow-y:auto;max-height:calc(100vh - 130px);animation:sIn 0.3s ease;}
+@keyframes sIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:none;}}
+.slide::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent);}
+.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.stype{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:3px 10px;border-radius:5px;display:inline-block;}
+.t-intro   {background:rgba(200,224,110,.15);color:#c8e06e;border:1px solid rgba(200,224,110,.35);}
+.t-concept {background:rgba(232,200,78,.15);color:#e8c84e;border:1px solid rgba(232,200,78,.35);}
+.t-activity{background:rgba(255,160,80,.15);color:#ffa050;border:1px solid rgba(255,160,80,.35);}
+.t-summary {background:rgba(110,200,122,.15);color:#6ec87a;border:1px solid rgba(110,200,122,.35);}
+.t-compete {background:rgba(232,200,78,.15);color:#e8c84e;border:1px solid rgba(232,200,78,.35);}
+.snum{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.slide h1{font-size:clamp(20px,3.5vw,32px);font-weight:700;line-height:1.2;margin-bottom:16px;color:var(--text);}
+.sb{color:var(--muted);font-size:15px;line-height:1.8;}
+.sb ul,.sb ol{padding-left:22px;}
+.sb li{margin-bottom:7px;}
+.sb li::marker{color:var(--accent);}
+.sb strong{color:var(--text);}
+.sb p{margin-bottom:12px;}
+.sb p:last-child{margin-bottom:0;}
+code{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:5px;font-size:13px;color:var(--accent);}
+pre{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:16px 20px;border-radius:10px;font-size:13px;color:var(--accent);overflow-x:auto;margin:12px 0;line-height:1.7;}
+.callout{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;font-size:14px;color:var(--text);}
+.callout.warn{border-left-color:var(--warning);background:rgba(232,200,78,.08);}
+.callout.success{border-left-color:var(--success);background:rgba(110,200,122,.08);}
+.callout.danger{border-left-color:var(--danger);background:rgba(224,112,96,.08);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0;}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px;}
+.bit-table{width:100%;border-collapse:collapse;margin:14px 0;font-family:var(--mono);}
+.bit-table th{background:var(--surface2);padding:9px 12px;border:1px solid var(--border);text-align:center;font-size:13px;color:var(--accent);}
+.bit-table td{padding:9px 12px;border:1px solid var(--border);text-align:center;font-size:13px;}
+.bit-table tr:nth-child(even) td{background:rgba(255,255,255,.03);}
+.bit-hi{background:rgba(200,224,110,.18)!important;color:var(--accent);font-weight:700;}
+.task-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0;}
+.task-box h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text);}
+.answer-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.answer-row label{font-size:13px;color:var(--muted);min-width:260px;flex:1 1 260px;line-height:1.5;}
+.ans-input{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-family:var(--mono);font-size:14px;width:clamp(140px,30vw,300px);text-align:left;transition:border-color .2s;}
+.ans-input:focus{outline:none;border-color:var(--accent);}
+.check-btn{padding:6px 14px;border-radius:7px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.check-btn:hover{background:var(--accent);color:#1a1e08;}
+.fb{font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;display:none;}
+.fb.ok{background:rgba(110,200,122,.15);color:var(--success);border:1px solid var(--success);display:inline-block;}
+.fb.no{background:rgba(224,112,96,.15);color:var(--danger);border:1px solid var(--danger);display:inline-block;}
+.compete-board{background:var(--surface2);border:2px solid var(--warning);border-radius:14px;padding:20px;margin:14px 0;}
+.score-display{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--warning);text-align:center;margin:10px 0;}
+.timer-bar{height:8px;background:var(--border);border-radius:4px;margin:8px 0;overflow:hidden;}
+.timer-fill{height:100%;background:var(--warning);border-radius:4px;transition:width 1s linear;}
+.compete-input{background:var(--bg);border:2px solid var(--warning);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--mono);font-size:18px;width:100%;text-align:center;margin:10px 0;}
+.compete-input:focus{outline:none;}
+.compete-btn{padding:10px 28px;border-radius:8px;border:none;background:var(--warning);color:#1a1e08;font-weight:700;font-size:14px;cursor:pointer;width:100%;margin-top:6px;}
+.compete-q{font-size:17px;font-weight:700;text-align:center;padding:14px;color:var(--text);min-height:52px;}
+.leaderboard{list-style:none;margin-top:10px;}
+.leaderboard li{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;font-size:13px;margin-bottom:4px;background:rgba(232,200,78,.07);border:1px solid rgba(232,200,78,.18);}
+.lb-pos{font-family:var(--mono);font-size:12px;color:var(--warning);width:24px;}
+.lb-name{flex:1;font-weight:600;}
+.lb-score{font-family:var(--mono);font-size:13px;color:var(--warning);}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);}
+.nav-btn{padding:8px 22px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);transition:all .2s;}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;}
+.nav-btn.primary{background:var(--accent);color:#1a1e08;border-color:var(--accent);font-weight:700;}
+.nav-center{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.dot-row{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:320px;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;flex-shrink:0;}
+.pdot.active{background:var(--accent);transform:scale(1.4);}
+.pdot.done{background:var(--muted);}
+.pdot.cdot{background:rgba(232,200,78,.35);}
+.pdot.cdot.active{background:var(--warning);}
+.sctr{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.kbhint{font-size:11px;color:var(--muted);}
+@media(max-width:640px){.slide{padding:22px 16px;}.two-col,.three-col{grid-template-columns:1fr;}.nav-btn{padding:7px 12px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="presentation">
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="slide-area"><div class="slide" id="slide"></div></div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="prev-btn" onclick="goPrev()">← Back</button>
+    <div class="nav-center">
+      <div class="dot-row" id="dots"></div>
+      <div class="sctr" id="sctr">1 / 1</div>
+      <div class="kbhint">← → Space to navigate</div>
+    </div>
+    <button class="nav-btn primary" id="next-btn" onclick="goNext()">Next →</button>
+  </div>
+</div>
+<script>
+const LESSON_ID = 'y9p6';
+const SLIDES = [{"type": "intro", "title": "Writing Complete Python Programs", "body": "<p>The final lesson brings all five Python skills together. We'll write complete programs that combine variables, conditionals, loops, functions and lists — and review everything for exam preparation.</p>\n<div class=\"callout\">🎯 A well-structured program: functions at the top, main logic at the bottom, clear variable names, comments where needed.</div>\n<div class=\"three-col\">\n<div class=\"card\"><h4>L1 Variables & I/O</h4><p>Storing and displaying data</p></div>\n<div class=\"card\"><h4>L2 Conditionals</h4><p>Decisions with if/elif/else</p></div>\n<div class=\"card\"><h4>L3 Loops</h4><p>for and while repetition</p></div>\n</div>\n<div class=\"two-col\">\n<div class=\"card\"><h4>L4 Functions</h4><p>def, parameters, return</p></div>\n<div class=\"card\"><h4>L5 Lists & Strings</h4><p>Collections and text</p></div>\n</div>"}, {"type": "concept", "title": "Complete Program 1 — Number Guessing Game", "body": "<pre>import random\n\ndef get_guess():\n    # Get a valid integer guess from the user.\n    while True:\n        try:\n            return int(input(\"Guess (1-100): \"))\n        except ValueError:\n            print(\"Please enter a number!\")\n\ndef play_game():\n    target  = random.randint(1, 100)\n    guesses = 0\n\n    while True:\n        guess   = get_guess()\n        guesses += 1\n        if guess < target:\n            print(\"Too low!\")\n        elif guess > target:\n            print(\"Too high!\")\n        else:\n            print(f\"Correct in {guesses} guesses!\")\n            break\n\nplay_game()</pre>\n<p>This uses: functions, while loop, conditionals, input validation, f-strings.</p>"}, {"type": "concept", "title": "Complete Program 2 — Quiz System", "body": "<pre>questions = [\n    (\"What is 2 ** 8?\",    \"256\"),\n    (\"What does CPU stand for?\",\n     \"central processing unit\"),\n    (\"How many bits in a byte?\", \"8\"),\n]\n\ndef run_quiz(questions):\n    score = 0\n    for q, answer in questions:\n        user = input(q + \" \").strip().lower()\n        if user == answer.lower():\n            print(\"✓ Correct!\")\n            score += 1\n        else:\n            print(f\"✗ Answer: {answer}\")\n    pct = round(score / len(questions) * 100)\n    print(f\"Score: {score}/{len(questions)} ({pct}%)\")\n    return score\n\nrun_quiz(questions)</pre>"}, {"type": "concept", "title": "Complete Program 3 — Student Grade Calculator", "body": "<pre>def get_grade(score):\n    if score >= 90:   return \"A*\"\n    elif score >= 80: return \"A\"\n    elif score >= 70: return \"B\"\n    elif score >= 60: return \"C\"\n    elif score >= 50: return \"D\"\n    else:             return \"Fail\"\n\ndef process_class():\n    scores = []\n    n = int(input(\"How many students? \"))\n    for i in range(n):\n        s = int(input(f\"Score for student {i+1}: \"))\n        scores.append(s)\n\n    grades = [get_grade(s) for s in scores]\n    avg    = sum(scores) / len(scores)\n\n    print(f\"Average: {avg:.1f}\")\n    print(f\"Highest: {max(scores)}\")\n    print(f\"Lowest:  {min(scores)}\")\n    print(\"Grades:\", grades)\n\nprocess_class()</pre>"}, {"type": "concept", "title": "Error Handling with try/except", "body": "<p>Programs should handle errors gracefully rather than crashing:</p>\n<pre>def safe_divide(a, b):\n    try:\n        result = a / b\n        return result\n    except ZeroDivisionError:\n        print(\"Cannot divide by zero!\")\n        return None\n    except TypeError:\n        print(\"Both values must be numbers!\")\n        return None\n\n# Input validation with try/except\ndef get_integer(prompt):\n    while True:\n        try:\n            return int(input(prompt))\n        except ValueError:\n            print(\"Please enter a whole number.\")</pre>\n<div class=\"callout\">💡 <code>try</code> attempts the code; <code>except ExceptionType</code> catches specific errors. Always handle the specific error type — not just bare <code>except:</code>.</div>"}, {"type": "concept", "title": "Dictionaries — Key-Value Pairs", "body": "<p>A <strong>dictionary</strong> stores data as key-value pairs — extremely useful for lookups:</p>\n<pre>student = {\n    \"name\":  \"Alice\",\n    \"age\":   15,\n    \"grade\": \"A\"\n}\n\n# Access by key\nprint(student[\"name\"])  # Alice\n\n# Add/update\nstudent[\"score\"] = 92\n\n# Check key exists\nif \"grade\" in student:\n    print(student[\"grade\"])\n\n# Iterate\nfor key, value in student.items():\n    print(f\"{key}: {value}\")</pre>\n<div class=\"callout\">💡 Dictionaries are O(1) lookup — they find any value instantly regardless of size.</div>"}, {"type": "concept", "title": "Full Python Skills Review", "body": "<table class=\"bit-table\"><tr><th>Concept</th><th>Key syntax</th></tr>\n<tr><td>Variable</td><td><code>x = 5</code></td></tr>\n<tr><td>Input</td><td><code>x = int(input(\"?\"))</code></td></tr>\n<tr><td>Output</td><td><code>print(f\"Hello {name}\")</code></td></tr>\n<tr><td>If/elif/else</td><td><code>if x > 0: ... elif ... else:</code></td></tr>\n<tr><td>For loop</td><td><code>for i in range(n):</code></td></tr>\n<tr><td>While loop</td><td><code>while condition:</code></td></tr>\n<tr><td>Function def</td><td><code>def name(param): return val</code></td></tr>\n<tr><td>List</td><td><code>lst = [1,2,3]; lst.append(4)</code></td></tr>\n<tr><td>Dictionary</td><td><code>d = {\"key\":\"val\"}; d[\"key\"]</code></td></tr>\n<tr><td>Error handling</td><td><code>try: ... except ValueError:</code></td></tr></table>"}, {"type": "activity", "title": "Final Review Tasks — Python", "body": "<div class=\"task-box\"><h4>📝 Complete Python review</h4><div class=\"answer-row\"><label>1. How do you define a function called greet with parameter name?</label><input class=\"ans-input\" id=\"py1\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py1\" data-fb=\"fpy1\" data-ans=\"def greet(name):\">Check</button><span class=\"fb\" id=\"fpy1\"></span></div><div class=\"answer-row\"><label>2. What does return do in a function?</label><input class=\"ans-input\" id=\"py2\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py2\" data-fb=\"fpy2\" data-ans=\"sends a value back|exits the function|returns a value to the caller\">Check</button><span class=\"fb\" id=\"fpy2\"></span></div><div class=\"answer-row\"><label>3. input() always returns what type?</label><input class=\"ans-input\" id=\"py3\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py3\" data-fb=\"fpy3\" data-ans=\"string|str\">Check</button><span class=\"fb\" id=\"fpy3\"></span></div><div class=\"answer-row\"><label>4. What keyword exits a loop early?</label><input class=\"ans-input\" id=\"py4\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py4\" data-fb=\"fpy4\" data-ans=\"break\">Check</button><span class=\"fb\" id=\"fpy4\"></span></div><div class=\"answer-row\"><label>5. What method adds an item to the end of a list?</label><input class=\"ans-input\" id=\"py5\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py5\" data-fb=\"fpy5\" data-ans=\"append|.append()\">Check</button><span class=\"fb\" id=\"fpy5\"></span></div><div class=\"answer-row\"><label>6. What does range(1,11) produce?</label><input class=\"ans-input\" id=\"py6\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py6\" data-fb=\"fpy6\" data-ans=\"1 to 10|1,2,3,4,5,6,7,8,9,10|numbers 1 to 10\">Check</button><span class=\"fb\" id=\"fpy6\"></span></div><div class=\"answer-row\"><label>7. What data structure stores key-value pairs?</label><input class=\"ans-input\" id=\"py7\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py7\" data-fb=\"fpy7\" data-ans=\"dictionary|dict\">Check</button><span class=\"fb\" id=\"fpy7\"></span></div><div class=\"answer-row\"><label>8. What Python keyword handles errors?</label><input class=\"ans-input\" id=\"py8\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py8\" data-fb=\"fpy8\" data-ans=\"try|try except\">Check</button><span class=\"fb\" id=\"fpy8\"></span></div><div class=\"answer-row\"><label>9. What is a list comprehension?</label><input class=\"ans-input\" id=\"py9\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py9\" data-fb=\"fpy9\" data-ans=\"compact way to create a list|one-line list creation|[x for x in list]\">Check</button><span class=\"fb\" id=\"fpy9\"></span></div><div class=\"answer-row\"><label>10. What does DRY mean in programming?</label><input class=\"ans-input\" id=\"py10\" placeholder=\"...\"><button class=\"check-btn\" data-inp=\"py10\" data-fb=\"fpy10\" data-ans=\"Don't Repeat Yourself|do not repeat yourself\">Check</button><span class=\"fb\" id=\"fpy10\"></span></div></div>"}, {"type": "summary", "title": "Year 9 Python Unit Summary", "body": "<h3>Everything you have learned:</h3>\n<ul>\n<li>Variables: int, float, str, bool. <code>input()</code> always returns str</li>\n<li>Selection: <code>if/elif/else</code> — Python checks top to bottom, uses indentation</li>\n<li>For loops: count-controlled with <code>range()</code>; while loops: condition-controlled</li>\n<li>Functions: <code>def name(params): return value</code> — DRY principle</li>\n<li>Lists: mutable, zero-indexed. Key methods: append, pop, sort, len</li>\n<li>Strings: immutable. Methods: upper, lower, split, join, strip, replace</li>\n<li>Dictionaries: key-value pairs, O(1) lookup</li>\n<li>Error handling: <code>try/except</code> for graceful failure</li>\n<li>List comprehensions: compact, Pythonic</li>\n</ul>\n<div class=\"callout success\">🎉 Congratulations — you have completed the Year 9 Python Programming unit!</div>"}, {"type": "compete", "title": "🏆 Ultimate Python Challenge", "body": "<div class=\"compete-board\">\n<h4>🏆 Ultimate Python Challenge — All 6 Lessons</h4>\n<div id=\"comp-start\">\n  <p style=\"font-size:13px;color:var(--muted);margin-bottom:10px\">15 seconds per question — faster answers score more!</p>\n  <input class=\"compete-input\" id=\"comp-name\" placeholder=\"Your name...\">\n  <button class=\"compete-btn\" onclick=\"startComp()\">🚀 Start Challenge!</button>\n  <ul class=\"leaderboard\" id=\"comp-lb\" style=\"margin-top:12px\"></ul>\n</div>\n<div id=\"comp-game\" style=\"display:none\">\n  <div style=\"display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px\">\n    <span id=\"comp-qn\">Q1</span><span id=\"comp-tl\" style=\"color:var(--warning)\">15s</span>\n  </div>\n  <div class=\"timer-bar\"><div class=\"timer-fill\" id=\"comp-fill\" style=\"width:100%\"></div></div>\n  <div class=\"compete-q\" id=\"comp-q\"></div>\n  <input class=\"compete-input\" id=\"comp-ans\" placeholder=\"Answer...\" autocomplete=\"off\">\n  <button class=\"compete-btn\" onclick=\"submitAns()\">Submit ↵</button>\n  <div style=\"display:flex;justify-content:space-between;margin-top:8px\">\n    <span style=\"font-size:13px;color:var(--muted)\">Score: <strong id=\"comp-score\" style=\"color:var(--warning);font-family:var(--mono)\">0</strong></span>\n    <span class=\"fb\" id=\"comp-fb\"></span>\n  </div>\n</div>\n<div id=\"comp-end\" style=\"display:none;text-align:center\">\n  <div style=\"font-size:36px;margin-bottom:8px\">🎉</div>\n  <p style=\"font-size:17px;font-weight:700\">Well done, <span id=\"comp-final-name\"></span>!</p>\n  <div class=\"score-display\" id=\"comp-final-score\">0</div>\n  <button class=\"compete-btn\" onclick=\"resetComp()\" style=\"margin-top:8px\">🔄 Play Again</button>\n  <ul class=\"leaderboard\" id=\"comp-lb-end\" style=\"margin-top:12px;text-align:left\"></ul>\n</div>\n</div>"}];
+const COMP_Qs = [{"q": "Define a function called hello?", "answers": ["def hello():"]}, {"q": "Keyword to return a value?", "answers": ["return"]}, {"q": "input() returns which type?", "answers": ["string", "str"]}, {"q": "Break exits what?", "answers": ["the loop", "a loop", "loop"]}, {"q": "Method to add to end of list?", "answers": ["append", ".append()"]}, {"q": "range(1,6) gives how many values?", "answers": ["5", "five"]}, {"q": "Data structure with key-value pairs?", "answers": ["dictionary", "dict"]}, {"q": "Keyword for error handling?", "answers": ["try", "try/except"]}, {"q": "DRY stands for?", "answers": ["Don't Repeat Yourself"]}, {"q": "7 % 3 returns?", "answers": ["1"]}, {"q": "Keyword to check if value is in a list?", "answers": ["in"]}, {"q": "2 ** 10 equals?", "answers": ["1024"]}];
+
+function attachCheckListeners(){
+  document.querySelectorAll('.check-btn[data-inp]').forEach(function(btn){
+    if(btn._wired)return; btn._wired=true;
+    btn.addEventListener('click',function(){
+      schkAny(this.getAttribute('data-inp'),this.getAttribute('data-fb'),this.getAttribute('data-ans').split('|'));
+    });
+  });
+}
+function schkAny(iid,fid,answers){
+  var clean=function(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,'');};
+  var val=clean(document.getElementById(iid).value.trim());
+  var ok=answers.map(clean).indexOf(val)>-1;
+  var fb=document.getElementById(fid);
+  fb.className='fb '+(ok?'ok':'no');
+  fb.textContent=ok?'✓ Correct!':'✗ Try again — '+answers[0];
+}
+function schk(iid,fid,correct){schkAny(iid,fid,[correct]);}
+function chk(iid,fid,correct){schkAny(iid,fid,[correct]);}
+function chkAny(iid,fid,answers){schkAny(iid,fid,answers);}
+
+var cur=0;
+function render(){
+  var s=SLIDES[cur];
+  var tl=s.type==='compete'?'Competition':s.type.charAt(0).toUpperCase()+s.type.slice(1);
+  document.getElementById('slide').innerHTML=
+    '<div class="eyebrow"><span class="stype t-'+s.type+'">'+tl+'</span>'+
+    '<span class="snum">Slide '+(cur+1)+' of '+SLIDES.length+'</span></div>'+
+    '<h1>'+s.title+'</h1><div class="sb">'+s.body+'</div>';
+  document.getElementById('prog').style.width=((cur+1)/SLIDES.length*100)+'%';
+  document.getElementById('sctr').textContent=(cur+1)+' / '+SLIDES.length;
+  document.getElementById('prev-btn').disabled=cur===0;
+  document.getElementById('next-btn').disabled=cur===SLIDES.length-1;
+  var dh='';
+  SLIDES.forEach(function(sl,i){
+    dh+='<div class="pdot'+(sl.type==='compete'?' cdot':'')+(i===cur?' active':i<cur?' done':'')+'" onclick="goTo('+i+')" title="'+sl.title.replace(/"/g,"'")+'"></div>';
+  });
+  document.getElementById('dots').innerHTML=dh;
+  if(s.type==='compete'){
+    var lb=JSON.parse(localStorage.getItem('tp_lb_'+LESSON_ID)||'[]');
+    var el=document.getElementById('comp-lb');
+    if(el)renderLB(el,lb);
+  }
+  attachCheckListeners();
+}
+function goNext(){if(cur<SLIDES.length-1){cur++;render();}}
+function goPrev(){if(cur>0){cur--;render();}}
+function goTo(i){cur=i;render();}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goNext();}
+  if(e.key==='ArrowLeft'){e.preventDefault();goPrev();}
+});
+
+/* Speed challenge */
+var cqs=[],cIdx=0,cScore=0,cName='',cTimer=null,cRunning=false;
+function startComp(){
+  cName=document.getElementById('comp-name').value.trim()||'Anonymous';
+  cScore=0;cIdx=0;cRunning=true;
+  cqs=[].concat(COMP_Qs).sort(function(){return Math.random()-.5;});
+  document.getElementById('comp-start').style.display='none';
+  document.getElementById('comp-game').style.display='block';
+  nextQ();
+}
+function nextQ(){
+  if(cIdx>=cqs.length){endComp();return;}
+  var q=cqs[cIdx];
+  document.getElementById('comp-q').textContent=q.q;
+  document.getElementById('comp-qn').textContent='Q'+(cIdx+1)+'/'+cqs.length;
+  document.getElementById('comp-ans').value='';
+  document.getElementById('comp-fb').className='fb';
+  document.getElementById('comp-ans').focus();
+  var t=15,fill=document.getElementById('comp-fill');
+  fill.style.transition='none';fill.style.width='100%';
+  setTimeout(function(){fill.style.transition='width 1s linear';fill.style.width='0%';},50);
+  clearInterval(cTimer);
+  cTimer=setInterval(function(){t--;document.getElementById('comp-tl').textContent=t+'s';if(t<=0){clearInterval(cTimer);autoNext();}},1000);
+}
+function autoNext(){
+  if(!cRunning)return;
+  var fb=document.getElementById('comp-fb');
+  fb.className='fb no';fb.textContent='⏱ Time! Ans: '+cqs[cIdx].answers[0];
+  cIdx++;setTimeout(nextQ,1200);
+}
+function submitAns(){
+  if(!cRunning)return;
+  clearInterval(cTimer);
+  var clean=function(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,'');};
+  var ans=clean(document.getElementById('comp-ans').value.trim());
+  var q=cqs[cIdx],ok=q.answers.map(clean).indexOf(ans)>-1;
+  var pct=parseFloat(document.getElementById('comp-fill').style.width)||0;
+  var pts=ok?Math.ceil(pct/10)+10:0;
+  var fb=document.getElementById('comp-fb');
+  if(ok){cScore+=pts;document.getElementById('comp-score').textContent=cScore;fb.className='fb ok';fb.textContent='✓ +'+pts+' pts!';}
+  else{fb.className='fb no';fb.textContent='✗ Ans: '+q.answers[0];}
+  cIdx++;setTimeout(nextQ,1000);
+}
+document.addEventListener('keydown',function(e){
+  var el=document.getElementById('comp-ans');
+  if(e.key==='Enter'&&cRunning&&el&&document.activeElement===el)submitAns();
+});
+function endComp(){
+  cRunning=false;
+  document.getElementById('comp-game').style.display='none';
+  document.getElementById('comp-end').style.display='block';
+  document.getElementById('comp-final-name').textContent=cName;
+  document.getElementById('comp-final-score').textContent=cScore;
+  var lb=JSON.parse(localStorage.getItem('tp_lb_'+LESSON_ID)||'[]');
+  lb.push({name:cName,score:cScore,ts:Date.now()});
+  lb.sort(function(a,b){return b.score-a.score;});
+  localStorage.setItem('tp_lb_'+LESSON_ID,JSON.stringify(lb.slice(0,10)));
+  renderLB(document.getElementById('comp-lb-end'),lb);
+}
+function resetComp(){
+  document.getElementById('comp-end').style.display='none';
+  document.getElementById('comp-start').style.display='block';
+  var lb=JSON.parse(localStorage.getItem('tp_lb_'+LESSON_ID)||'[]');
+  renderLB(document.getElementById('comp-lb'),lb);
+}
+function renderLB(el,lb){
+  if(!el)return;
+  el.innerHTML=lb.slice(0,10).map(function(e,i){
+    return '<li><span class="lb-pos">'+(i+1)+'</span><span class="lb-name">'+e.name+'</span><span class="lb-score">'+e.score+' pts</span></li>';
+  }).join('');
+}
+render();
+
+</script>
+</body>
+</html>

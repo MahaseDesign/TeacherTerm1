@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS Term Platform — Teacher Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#2d3318;--surface:#3a4220;--surface2:#454e27;--border:#5a6632;
+  --accent:#c8e06e;--accent2:#e8c84e;--text:#f0f2e0;--muted:#9aa878;
+  --success:#6ec87a;--warning:#e8c84e;--danger:#e07060;
+  --mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.header-title{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent);letter-spacing:.1em;}
+.header-sub{font-size:.78rem;color:var(--muted);margin-top:3px;}
+.lock-badge{font-family:var(--mono);font-size:.68rem;background:rgba(232,200,78,.12);border:1px solid rgba(232,200,78,.3);color:var(--warning);padding:4px 12px;border-radius:20px;}
+
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 70px);}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 44px;width:100%;max-width:400px;text-align:center;}
+.login-card h2{font-family:var(--mono);font-size:1.1rem;color:var(--accent);margin-bottom:8px;letter-spacing:.1em;}
+.login-card p{font-size:.85rem;color:var(--muted);margin-bottom:24px;}
+.pin-input{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:2rem;text-align:center;letter-spacing:.4em;color:var(--text);width:100%;margin-bottom:12px;}
+.pin-input:focus{outline:none;border-color:var(--accent);}
+.btn{padding:11px 24px;border-radius:8px;font-weight:700;font-size:.82rem;cursor:pointer;border:none;transition:all .22s;font-family:var(--sans);}
+.btn-primary{background:var(--accent);color:#1a1e08;}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-secondary{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.err-msg{color:var(--danger);font-size:.8rem;font-family:var(--mono);margin-top:8px;display:none;}
+
+/* MAIN LAYOUT */
+.main{display:none;grid-template-columns:260px 1fr;min-height:calc(100vh - 70px);}
+.main.show{display:grid;}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 0;overflow-y:auto;}
+.year-group{margin-bottom:4px;}
+.year-header{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:10px 18px 6px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.year-header:hover{color:var(--accent);}
+.year-arrow{transition:transform .2s;font-size:.6rem;}
+.year-lessons{display:none;padding:0 10px 8px;}
+.year-lessons.open{display:block;}
+.lesson-btn{display:block;width:100%;text-align:left;padding:9px 14px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer;font-family:var(--sans);transition:all .18s;margin-bottom:2px;}
+.lesson-btn:hover{background:var(--surface2);color:var(--text);}
+.lesson-btn.active{background:rgba(200,224,110,.15);color:var(--accent);font-weight:600;}
+.lesson-tag{font-family:var(--mono);font-size:.6rem;padding:2px 7px;border-radius:4px;margin-right:6px;display:inline-block;}
+.tag-7{background:rgba(200,224,110,.15);color:var(--accent);}
+.tag-8{background:rgba(232,200,78,.15);color:var(--warning);}
+.tag-9{background:rgba(110,200,122,.15);color:var(--success);}
+
+/* CONTENT */
+.content{padding:28px;overflow-y:auto;}
+.content-inner{max-width:960px;}
+
+/* WELCOME */
+.welcome-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+.stat-num{font-family:var(--mono);font-size:2rem;font-weight:700;color:var(--accent);}
+.stat-label{font-size:.75rem;color:var(--muted);margin-top:4px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* LESSON VIEW */
+.lesson-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;}
+.lesson-title-area h1{font-size:1.3rem;font-weight:700;margin-bottom:4px;}
+.lesson-title-area p{font-size:.82rem;color:var(--muted);}
+.lesson-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* SLIDES PANEL */
+.slides-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.slide-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;}
+.slide-row:hover{border-color:var(--accent);background:var(--surface2);}
+.slide-row.active{border-color:var(--accent);background:rgba(200,224,110,.08);}
+.slide-num{font-family:var(--mono);font-size:.7rem;color:var(--muted);width:24px;flex-shrink:0;}
+.slide-type-badge{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em;flex-shrink:0;}
+.badge-intro   {background:rgba(200,224,110,.15);color:var(--accent);}
+.badge-concept {background:rgba(232,200,78,.15);color:var(--warning);}
+.badge-activity{background:rgba(255,160,80,.15);color:#ffa050;}
+.badge-summary {background:rgba(110,200,122,.15);color:var(--success);}
+.badge-compete {background:rgba(232,200,78,.15);color:var(--warning);}
+.slide-title{font-size:.88rem;font-weight:600;flex:1;}
+
+/* PRESENT PANEL */
+.present-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px;}
+.present-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+.present-header-left{font-family:var(--mono);font-size:.8rem;color:var(--accent);}
+.pnav{display:flex;align-items:center;gap:10px;}
+.pnav-btn{padding:7px 16px;border-radius:7px;font-weight:700;font-size:.75rem;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--sans);transition:all .2s;}
+.pnav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.pnav-btn.primary{background:var(--accent);color:#1a1e08;border-color:var(--accent);}
+.pnav-btn:disabled{opacity:.35;cursor:not-allowed;}
+.pslide-body{padding:28px 32px;min-height:400px;}
+.pslide-body h1{font-size:1.4rem;font-weight:700;margin-bottom:14px;}
+.pslide-body .sb{font-size:.95rem;line-height:1.8;color:var(--muted);}
+.pslide-body .sb strong{color:var(--text);}
+.pslide-body .sb ul{padding-left:20px;}
+.pslide-body .sb li{margin-bottom:6px;}
+.pslide-body .sb li::marker{color:var(--accent);}
+.pslide-body code{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:2px 6px;border-radius:4px;font-size:.85rem;color:var(--accent);}
+.pslide-body pre{font-family:var(--mono);background:var(--surface2);border:1px solid var(--border);padding:14px 18px;border-radius:9px;font-size:.82rem;color:var(--accent);overflow-x:auto;margin:10px 0;line-height:1.7;}
+.pslide-body .callout{background:var(--surface2);border-left:3px solid var(--accent);padding:12px 16px;margin:12px 0;font-size:.88rem;border-radius:0 9px 9px 0;color:var(--text);}
+.pslide-body .callout.warn{border-left-color:var(--warning);}
+.pslide-body .callout.success{border-left-color:var(--success);}
+.pslide-body .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0;}
+.pslide-body .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+.pslide-body .card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.pslide-body .card h4{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:8px;}
+.pslide-body .bit-table{width:100%;border-collapse:collapse;margin:12px 0;font-family:var(--mono);}
+.pslide-body .bit-table th{background:var(--surface2);padding:8px 12px;border:1px solid var(--border);text-align:center;font-size:.8rem;color:var(--accent);}
+.pslide-body .bit-table td{padding:8px 12px;border:1px solid var(--border);text-align:center;font-size:.82rem;}
+.pslide-body .bit-hi{background:rgba(200,224,110,.18)!important;color:var(--accent);font-weight:700;}
+
+/* task/activity in present */
+.pslide-body .task-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:12px 0;}
+.pslide-body .task-box h4{font-size:.8rem;font-weight:700;margin-bottom:10px;color:var(--text);}
+.pslide-body .answer-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.pslide-body .answer-row label{font-size:.82rem;color:var(--muted);min-width:240px;flex:1 1 240px;line-height:1.5;}
+.pslide-body .ans-input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-family:var(--mono);font-size:.82rem;width:clamp(120px,25vw,260px);}
+.pslide-body .ans-input:focus{outline:none;border-color:var(--accent);}
+.pslide-body .check-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.pslide-body .check-btn:hover{background:var(--accent);color:#1a1e08;}
+.pslide-body .fb{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:5px;display:none;}
+.pslide-body .fb.ok{background:rgba(110,200,122,.15);color:var(--success);border:1px solid var(--success);display:inline-block;}
+.pslide-body .fb.no{background:rgba(224,112,96,.15);color:var(--danger);border:1px solid var(--danger);display:inline-block;}
+
+/* LEADERBOARD */
+.lb-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.lb-section h3{font-family:var(--mono);font-size:.82rem;color:var(--warning);margin-bottom:14px;letter-spacing:.1em;text-transform:uppercase;}
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table th{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
+.lb-table td{padding:10px 12px;border-bottom:1px solid rgba(90,102,50,.3);font-size:.85rem;}
+.lb-table tr:last-child td{border-bottom:none;}
+.lb-pos{font-family:var(--mono);color:var(--warning);font-weight:700;}
+.lb-score{font-family:var(--mono);color:var(--warning);}
+.lb-empty{text-align:center;padding:30px;color:var(--muted);font-size:.82rem;}
+
+/* PROGRESS BAR on present */
+.pprog{height:3px;background:var(--border);}
+.pprog-fill{height:100%;background:var(--accent);transition:width .4s;}
+
+/* FULLSCREEN BTN */
+.fs-btn{padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:.72rem;cursor:pointer;font-family:var(--mono);}
+.fs-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* section heading */
+.section-heading{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+@media(max-width:700px){
+  .main{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .welcome-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">⬡ CS TERM PLATFORM</div>
+    <div class="header-sub">Teacher Portal — KS3 Deep Dive Units</div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <span class="lock-badge" id="lockBadge">🔒 Locked</span>
+    <button class="btn btn-secondary" id="logoutBtn" style="display:none" onclick="logout()">Lock</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <h2>TEACHER ACCESS</h2>
+    <p>Enter your PIN to access the teacher portal</p>
+    <input type="password" class="pin-input" id="pinIn" maxlength="4" placeholder="••••"
+           oninput="this.value=this.value.replace(/\D/g,'')">
+    <div style="margin-top:4px">
+      <button class="btn btn-primary" style="width:100%;padding:13px" onclick="tryLogin()">Enter →</button>
+    </div>
+    <div class="err-msg" id="pinErr">⚠ Incorrect PIN</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainWrap">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div style="padding:14px 18px 10px;font-family:var(--mono);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)">Lessons</div>
+
+    <div class="year-group">
+      <div class="year-header" onclick="toggleYear(this)">
+        <span class="lesson-tag tag-7">Y7</span> Binary
+        <span class="year-arrow" style="margin-left:auto">▶</span>
+      </div>
+      <div class="year-lessons">
+        <button class="lesson-btn" onclick="loadLesson('y7b1')"><span class="lesson-tag tag-7">L1</span>What is Binary?</button>
+        <button class="lesson-btn" onclick="loadLesson('y7b2')"><span class="lesson-tag tag-7">L2</span>Binary → Denary</button>
+        <button class="lesson-btn" onclick="loadLesson('y7b3')"><span class="lesson-tag tag-7">L3</span>Denary → Binary</button>
+        <button class="lesson-btn" onclick="loadLesson('y7b4')"><span class="lesson-tag tag-7">L4</span>Binary Addition</button>
+        <button class="lesson-btn" onclick="loadLesson('y7b5')"><span class="lesson-tag tag-7">L5</span>Binary Shifts</button>
+        <button class="lesson-btn" onclick="loadLesson('y7b6')"><span class="lesson-tag tag-7">L6</span>Real World & Review</button>
+      </div>
+    </div>
+
+    <div class="year-group">
+      <div class="year-header" onclick="toggleYear(this)">
+        <span class="lesson-tag tag-8">Y8</span> Hex & Data
+        <span class="year-arrow" style="margin-left:auto">▶</span>
+      </div>
+      <div class="year-lessons">
+        <button class="lesson-btn" onclick="loadLesson('y8h1')"><span class="lesson-tag tag-8">L1</span>Intro to Hex</button>
+        <button class="lesson-btn" onclick="loadLesson('y8h2')"><span class="lesson-tag tag-8">L2</span>Hex ↔ Denary</button>
+        <button class="lesson-btn" onclick="loadLesson('y8h3')"><span class="lesson-tag tag-8">L3</span>Colour Codes</button>
+        <button class="lesson-btn" onclick="loadLesson('y8h4')"><span class="lesson-tag tag-8">L4</span>Image Representation</button>
+        <button class="lesson-btn" onclick="loadLesson('y8h5')"><span class="lesson-tag tag-8">L5</span>Sound & Compression</button>
+        <button class="lesson-btn" onclick="loadLesson('y8h6')"><span class="lesson-tag tag-8">L6</span>Full Review</button>
+      </div>
+    </div>
+
+    <div class="year-group">
+      <div class="year-header" onclick="toggleYear(this)">
+        <span class="lesson-tag tag-9">Y9</span> Python
+        <span class="year-arrow" style="margin-left:auto">▶</span>
+      </div>
+      <div class="year-lessons">
+        <button class="lesson-btn" onclick="loadLesson('y9p1')"><span class="lesson-tag tag-9">L1</span>Variables & I/O</button>
+        <button class="lesson-btn" onclick="loadLesson('y9p2')"><span class="lesson-tag tag-9">L2</span>Conditionals</button>
+        <button class="lesson-btn" onclick="loadLesson('y9p3')"><span class="lesson-tag tag-9">L3</span>Loops</button>
+        <button class="lesson-btn" onclick="loadLesson('y9p4')"><span class="lesson-tag tag-9">L4</span>Functions</button>
+        <button class="lesson-btn" onclick="loadLesson('y9p5')"><span class="lesson-tag tag-9">L5</span>Lists & Strings</button>
+        <button class="lesson-btn" onclick="loadLesson('y9p6')"><span class="lesson-tag tag-9">L6</span>Complete Programs</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="content-inner" id="contentInner">
+
+      <!-- WELCOME -->
+      <div id="welcomeView">
+        <div style="margin-bottom:20px">
+          <div class="section-heading">Overview</div>
+          <h1 style="font-size:1.4rem;margin-bottom:8px">Welcome to the Term Platform</h1>
+          <p style="color:var(--muted);font-size:.9rem">18 deep-dive lessons across 3 year groups. Select a lesson from the sidebar to present slides or view the speed challenge leaderboard.</p>
+        </div>
+        <div class="welcome-grid">
+          <div class="stat-card">
+            <div class="stat-num">18</div>
+            <div class="stat-label">Total Lessons</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" style="color:var(--warning)">~12</div>
+            <div class="stat-label">Slides per lesson</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" style="color:var(--success)">10</div>
+            <div class="stat-label">Speed Q's per lesson</div>
+          </div>
+        </div>
+        <div class="welcome-grid">
+          <div class="stat-card" style="border-color:rgba(200,224,110,.3)">
+            <div style="font-family:var(--mono);color:var(--accent);font-size:.75rem;margin-bottom:8px">YEAR 7 — BINARY</div>
+            <div style="font-size:.82rem;color:var(--muted)">L1 What is Binary · L2 Bin→Den · L3 Den→Bin · L4 Addition · L5 Shifts · L6 Review</div>
+          </div>
+          <div class="stat-card" style="border-color:rgba(232,200,78,.3)">
+            <div style="font-family:var(--mono);color:var(--warning);font-size:.75rem;margin-bottom:8px">YEAR 8 — HEX & DATA</div>
+            <div style="font-size:.82rem;color:var(--muted)">L1 Hex Intro · L2 Hex↔Denary · L3 Colours · L4 Images · L5 Sound · L6 Review</div>
+          </div>
+          <div class="stat-card" style="border-color:rgba(110,200,122,.3)">
+            <div style="font-family:var(--mono);color:var(--success);font-size:.75rem;margin-bottom:8px">YEAR 9 — PYTHON</div>
+            <div style="font-size:.82rem;color:var(--muted)">L1 Variables · L2 Conditionals · L3 Loops · L4 Functions · L5 Lists · L6 Programs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LESSON VIEW -->
+      <div id="lessonView" style="display:none">
+        <div class="lesson-header">
+          <div class="lesson-title-area">
+            <h1 id="lTitle">Lesson</h1>
+            <p id="lSub"></p>
+          </div>
+          <div class="lesson-actions">
+            <button class="btn btn-secondary" onclick="clearLB()" id="clearLbBtn">🗑 Clear Leaderboard</button>
+            <button class="btn btn-secondary" onclick="showWelcome()">← Back</button>
+          </div>
+        </div>
+
+        <!-- TABS -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;">
+          <button class="btn btn-primary" id="tab-slides" onclick="switchTab('slides')" style="font-size:.75rem;padding:8px 18px">📑 Slides</button>
+          <button class="btn btn-secondary" id="tab-present" onclick="switchTab('present')" style="font-size:.75rem;padding:8px 18px">▶ Present</button>
+          <button class="btn btn-secondary" id="tab-lb" onclick="switchTab('lb')" style="font-size:.75rem;padding:8px 18px">🏆 Leaderboard</button>
+        </div>
+
+        <!-- SLIDES TAB -->
+        <div id="tabSlides">
+          <div class="section-heading">Lesson Slides</div>
+          <div class="slides-list" id="slidesList"></div>
+        </div>
+
+        <!-- PRESENT TAB -->
+        <div id="tabPresent" style="display:none">
+          <div class="present-panel">
+            <div class="pprog"><div class="pprog-fill" id="pprogFill"></div></div>
+            <div class="present-header">
+              <div class="present-header-left" id="pSlideInfo">Slide 1</div>
+              <div class="pnav">
+                <button class="pnav-btn" id="pPrevBtn" onclick="pPrev()">← Back</button>
+                <span style="font-family:var(--mono);font-size:.75rem;color:var(--muted)" id="pCounter">1/1</span>
+                <button class="pnav-btn primary" id="pNextBtn" onclick="pNext()">Next →</button>
+                <button class="fs-btn" onclick="openFullscreen()">⛶ Fullscreen</button>
+              </div>
+            </div>
+            <div class="pslide-body" id="pSlideBody"></div>
+          </div>
+        </div>
+
+        <!-- LEADERBOARD TAB -->
+        <div id="tabLb" style="display:none">
+          <div class="lb-section">
+            <h3>🏆 Speed Challenge Leaderboard</h3>
+            <div id="lbContent"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const PIN = '1984';
+let currentLesson = null;
+let pCur = 0;
+
+// ── AUTH ──
+function tryLogin() {
+  if (document.getElementById('pinIn').value === PIN) {
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('mainWrap').classList.add('show');
+    document.getElementById('lockBadge').textContent = '✓ Teacher';
+    document.getElementById('lockBadge').style.background = 'rgba(110,200,122,.12)';
+    document.getElementById('lockBadge').style.color = 'var(--success)';
+    document.getElementById('logoutBtn').style.display = 'block';
+    // Auto-open year 7
+    const first = document.querySelector('.year-lessons');
+    if (first) { first.classList.add('open'); first.previousElementSibling.querySelector('.year-arrow').style.transform='rotate(90deg)'; }
+  } else {
+    document.getElementById('pinErr').style.display = 'block';
+    document.getElementById('pinIn').value = '';
+    setTimeout(() => document.getElementById('pinErr').style.display='none', 3000);
+  }
+}
+document.getElementById('pinIn').addEventListener('keydown', e => { if(e.key==='Enter') tryLogin(); });
+
+function logout() {
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('mainWrap').classList.remove('show');
+  document.getElementById('pinIn').value = '';
+  document.getElementById('lockBadge').textContent = '🔒 Locked';
+  document.getElementById('lockBadge').style.background = '';
+  document.getElementById('lockBadge').style.color = '';
+  document.getElementById('logoutBtn').style.display = 'none';
+}
+
+// ── SIDEBAR ──
+function toggleYear(header) {
+  const lessons = header.nextElementSibling;
+  const arrow   = header.querySelector('.year-arrow');
+  const open    = lessons.classList.toggle('open');
+  arrow.style.transform = open ? 'rotate(90deg)' : '';
+}
+
+// ── LESSON DATA ──
+const LESSON_META = {
+  y7b1:{title:'L1 — What is Binary?',           sub:'Year 7 · Binary Unit'},
+  y7b2:{title:'L2 — Binary to Denary',           sub:'Year 7 · Binary Unit'},
+  y7b3:{title:'L3 — Denary to Binary',           sub:'Year 7 · Binary Unit'},
+  y7b4:{title:'L4 — Binary Addition',            sub:'Year 7 · Binary Unit'},
+  y7b5:{title:'L5 — Binary Shifts',              sub:'Year 7 · Binary Unit'},
+  y7b6:{title:'L6 — Real World & Review',        sub:'Year 7 · Binary Unit'},
+  y8h1:{title:'L1 — Intro to Hexadecimal',       sub:'Year 8 · Hex & Data Unit'},
+  y8h2:{title:'L2 — Hex ↔ Denary',              sub:'Year 8 · Hex & Data Unit'},
+  y8h3:{title:'L3 — Hex Colour Codes',           sub:'Year 8 · Hex & Data Unit'},
+  y8h4:{title:'L4 — Image Representation',       sub:'Year 8 · Hex & Data Unit'},
+  y8h5:{title:'L5 — Sound & Compression',        sub:'Year 8 · Hex & Data Unit'},
+  y8h6:{title:'L6 — Full Data Review',           sub:'Year 8 · Hex & Data Unit'},
+  y9p1:{title:'L1 — Variables & I/O',            sub:'Year 9 · Python Unit'},
+  y9p2:{title:'L2 — Conditionals',               sub:'Year 9 · Python Unit'},
+  y9p3:{title:'L3 — Loops',                      sub:'Year 9 · Python Unit'},
+  y9p4:{title:'L4 — Functions',                  sub:'Year 9 · Python Unit'},
+  y9p5:{title:'L5 — Lists & Strings',            sub:'Year 9 · Python Unit'},
+  y9p6:{title:'L6 — Complete Programs & Review', sub:'Year 9 · Python Unit'},
+};
+
+// Fetch and load a lesson HTML file
+async function loadLesson(lid) {
+  // Mark active
+  document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  // Show lesson view
+  document.getElementById('welcomeView').style.display = 'none';
+  document.getElementById('lessonView').style.display  = 'block';
+  const meta = LESSON_META[lid] || {title:lid, sub:''};
+  document.getElementById('lTitle').textContent = meta.title;
+  document.getElementById('lSub').textContent   = meta.sub;
+
+  // Load the lesson file and extract SLIDES + COMP_Qs
+  try {
+    const resp = await fetch(`lessons/${lid}.html`);
+    const html = await resp.text();
+    // Extract SLIDES array
+    const sm = html.match(/const SLIDES = (\[[\s\S]*?\]);\s*const COMP_Qs/);
+    const cm = html.match(/const COMP_Qs = (\[[\s\S]*?\]);\n/);
+    if (!sm || !cm) throw new Error('Parse fail');
+    currentLesson = {
+      lid,
+      slides: JSON.parse(sm[1]),
+      comp:   JSON.parse(cm[1])
+    };
+    pCur = 0;
+    renderSlidesList();
+    renderPresentSlide();
+    renderLeaderboard();
+    switchTab('slides');
+  } catch(e) {
+    document.getElementById('slidesList').innerHTML = `<p style="color:var(--danger);font-size:.85rem">Could not load lesson file: lessons/${lid}.html<br>Make sure all lesson files are in the same folder as this portal.</p>`;
+  }
+}
+
+function showWelcome() {
+  document.getElementById('welcomeView').style.display = 'block';
+  document.getElementById('lessonView').style.display  = 'none';
+  document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+  currentLesson = null;
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  ['slides','present','lb'].forEach(t => {
+    document.getElementById('tab-'+t).className = 'btn btn-secondary';
+    document.getElementById('tabSlides').style.display  = 'none';
+    document.getElementById('tabPresent').style.display = 'none';
+    document.getElementById('tabLb').style.display      = 'none';
+  });
+  document.getElementById('tab-'+tab).className = 'btn btn-primary';
+  const map = {slides:'tabSlides', present:'tabPresent', lb:'tabLb'};
+  document.getElementById(map[tab]).style.display = 'block';
+  if (tab === 'lb') renderLeaderboard();
+}
+
+// ── SLIDES LIST ──
+const BADGE = {intro:'badge-intro',concept:'badge-concept',activity:'badge-activity',summary:'badge-summary',compete:'badge-compete'};
+function renderSlidesList() {
+  if (!currentLesson) return;
+  const list = document.getElementById('slidesList');
+  list.innerHTML = currentLesson.slides.map((s,i) => `
+    <div class="slide-row${pCur===i?' active':''}" onclick="jumpToSlide(${i})">
+      <span class="slide-num">${i+1}</span>
+      <span class="slide-type-badge ${BADGE[s.type]||'badge-intro'}">${s.type}</span>
+      <span class="slide-title">${s.title}</span>
+    </div>`).join('');
+}
+
+function jumpToSlide(i) {
+  pCur = i;
+  renderSlidesList();
+  renderPresentSlide();
+}
+
+// ── PRESENT ──
+function renderPresentSlide() {
+  if (!currentLesson) return;
+  const s   = currentLesson.slides[pCur];
+  const tot = currentLesson.slides.length;
+  document.getElementById('pprogFill').style.width = ((pCur+1)/tot*100)+'%';
+  document.getElementById('pSlideInfo').textContent = `Slide ${pCur+1} of ${tot} — ${s.type.charAt(0).toUpperCase()+s.type.slice(1)}`;
+  document.getElementById('pCounter').textContent   = `${pCur+1}/${tot}`;
+  document.getElementById('pPrevBtn').disabled = pCur === 0;
+  document.getElementById('pNextBtn').disabled = pCur === tot-1;
+  document.getElementById('pSlideBody').innerHTML = `<h1>${s.title}</h1><div class="sb">${s.body}</div>`;
+  // Wire check buttons
+  document.querySelectorAll('#pSlideBody .check-btn').forEach(btn => {
+    const oc = btn.getAttribute('onclick');
+    if (oc) { btn.removeAttribute('onclick'); btn.addEventListener('click', () => eval(oc)); }
+    const di = btn.getAttribute('data-inp');
+    if (di) {
+      btn.addEventListener('click', function() {
+        schkAny(this.getAttribute('data-inp'), this.getAttribute('data-fb'), this.getAttribute('data-ans').split('|'));
+      });
+    }
+  });
+}
+
+function pPrev() { if(pCur>0){ pCur--; renderPresentSlide(); renderSlidesList(); } }
+function pNext() { if(currentLesson && pCur<currentLesson.slides.length-1){ pCur++; renderPresentSlide(); renderSlidesList(); } }
+document.addEventListener('keydown', e => {
+  if (!currentLesson) return;
+  if (document.getElementById('tabPresent').style.display==='block') {
+    if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); pNext(); }
+    if (e.key==='ArrowLeft')               { e.preventDefault(); pPrev(); }
+  }
+});
+
+function openFullscreen() {
+  if (!currentLesson) return;
+  window.open(`lessons/${currentLesson.lid}.html`, '_blank');
+}
+
+// ── CHECK FUNCTIONS (for activity slides) ──
+function schkAny(iid, fid, answers) {
+  const clean = s => String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+  const val   = clean(document.getElementById(iid).value.trim());
+  const ok    = answers.map(clean).indexOf(val) > -1;
+  const fb    = document.getElementById(fid);
+  fb.className   = 'fb '+(ok?'ok':'no');
+  fb.textContent = ok ? '✓ Correct!' : '✗ Answer: '+answers[0];
+}
+function schk(iid,fid,correct){schkAny(iid,fid,[correct]);}
+function chk(iid,fid,correct){schkAny(iid,fid,[correct]);}
+function chkAny(iid,fid,ans){schkAny(iid,fid,ans);}
+
+// ── LEADERBOARD ──
+function renderLeaderboard() {
+  if (!currentLesson) return;
+  const lb = JSON.parse(localStorage.getItem('tp_lb_'+currentLesson.lid)||'[]');
+  const el = document.getElementById('lbContent');
+  if (!lb.length) {
+    el.innerHTML = '<div class="lb-empty">No scores yet for this lesson. Students must complete the speed challenge.</div>';
+    return;
+  }
+  el.innerHTML = '<table class="lb-table"><thead><tr><th>#</th><th>Name</th><th>Score</th><th>Date</th></tr></thead><tbody>'
+    + lb.slice(0,10).map((e,i)=>`<tr>
+        <td class="lb-pos">${i+1}</td>
+        <td>${e.name}</td>
+        <td class="lb-score">${e.score} pts</td>
+        <td style="font-family:var(--mono);font-size:.72rem;color:var(--muted)">${new Date(e.ts).toLocaleDateString('en-GB')}</td>
+      </tr>`).join('')
+    + '</tbody></table>';
+}
+
+function clearLB() {
+  if (!currentLesson) return;
+  if (!confirm('Clear the leaderboard for this lesson?')) return;
+  localStorage.removeItem('tp_lb_'+currentLesson.lid);
+  renderLeaderboard();
+}
+</script>
+</body>
+</html>
